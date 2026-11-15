@@ -2,6 +2,8 @@
 
 **Run Windows games and apps on your Mac.** A free, open-source alternative to CrossOver: a native SwiftUI app that manages Windows environments ("bottles") on top of Wine and Apple's D3DMetal, plus the DXMT and DXVK graphics layers.
 
+**Website:** https://aryankansagara.github.io/Decanter/ · **Download:** [Decanter.dmg](https://github.com/AryanKansagara/Decanter/releases/latest/download/Decanter.dmg)
+
 ## Features
 
 - **Three ways to draw DirectX on Metal**, switchable per bottle:
