@@ -94,11 +94,14 @@ public struct Bottle: Identifiable, Hashable, Sendable {
 
     public static func all() -> [Bottle] {
         let dirs = (try? FileManager.default.contentsOfDirectory(at: Paths.bottles, includingPropertiesForKeys: nil)) ?? []
-        return dirs.compactMap { dir in
-            (try? Data(contentsOf: dir.appending(path: "decanter.json")))
-                .flatMap { try? BottleConfig.decode($0) }
-                .map { Bottle(url: dir, config: $0) }
-        }.sorted { $0.config.name.localizedStandardCompare($1.config.name) == .orderedAscending }
+        return dirs.compactMap(load)
+            .sorted { $0.config.name.localizedStandardCompare($1.config.name) == .orderedAscending }
+    }
+
+    public static func load(_ dir: URL) -> Bottle? {
+        (try? Data(contentsOf: dir.appending(path: "decanter.json")))
+            .flatMap { try? BottleConfig.decode($0) }
+            .map { Bottle(url: dir, config: $0) }
     }
 
     /// Creates the folder and initializes the Windows environment (takes ~15 s).

@@ -1,0 +1,22 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app and DMG
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}" ARCHS="arm64 x86_64" scripts/bundle.sh
+          scripts/dmg.sh
+          ditto -c -k --keepParent build/Decanter.app build/Decanter.zip
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" build/Decanter.dmg build/Decanter.zip --generate-notes --title "Decanter ${GITHUB_REF_NAME#v}"
