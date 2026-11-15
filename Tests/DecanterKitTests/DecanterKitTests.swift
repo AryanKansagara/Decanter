@@ -56,7 +56,7 @@ import Testing
         let b0 = try makeBottle(c)
         let menu = b0.driveC.appending(path: "users/me/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Game")
         try FileManager.default.createDirectory(at: menu, withIntermediateDirectories: true)
-        for f in ["Game.lnk", "Uninstall Game.lnk", "readme.txt"] {
+        for f in ["Game.lnk", "Uninstall Game.lnk", "readme.txt", "tool.lnk"] {
             FileManager.default.createFile(atPath: menu.appending(path: f).path, contents: nil)
         }
         let exe = b0.driveC.appending(path: "Tool.exe")
@@ -64,6 +64,22 @@ import Testing
         c.pinned = [exe.path, "/missing.exe"]
         let b = Bottle(url: b0.url, config: c)
         #expect(b.programs().map(\.name) == ["Tool", "Game"])
+    }
+
+    @Test func shortcutTargetsResolveIntoTheBottle() throws {
+        // Minimal shell link: header with HasLinkInfo, LinkInfo whose LocalBasePath is a C: path.
+        var lnk = Data(count: 0x4C)
+        lnk[0] = 0x4C
+        lnk[0x14] = 0x02
+        var info = Data(count: 0x1C)
+        info[16] = 0x1C  // LocalBasePathOffset
+        info.append(Data(#"C:\Program Files\Game\game.exe"#.utf8) + [0])
+        lnk.append(info)
+        let file = Paths.root.appending(path: "Game.lnk")
+        try lnk.write(to: file)
+        let driveC = Paths.root.appending(path: "drive_c")
+        #expect(WindowsIcon.lnkTarget(file, driveC: driveC)?.path == driveC.path + "/Program Files/Game/game.exe")
+        #expect(WindowsIcon.ico(for: file, driveC: driveC) == nil) // target missing → no icon, no crash
     }
 
     @Test func graphicsVariantsLayerDLLs() throws {

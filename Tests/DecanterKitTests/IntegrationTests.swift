@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Testing
 @testable import DecanterKit
@@ -21,12 +22,17 @@ struct IntegrationTests {
         for engine in Engine.allCases {
             let b = try await Bottle.create(name: "it-\(engine.rawValue)", engine: engine)
             #expect(try await Wine.run(b, ["cmd", "/c", "ver"]) == 0)
+            let mine = b.driveC.appending(path: "windows/system32/winemine.exe")
+            #expect(WindowsIcon.ico(for: mine, driveC: b.driveC).flatMap(NSImage.init(data:)) != nil, "winemine icon")
             #expect(try await Wine.run(b, ["reg", "query", #"HKCU\Software\Wine\Mac Driver"#, "/v", "RetinaMode"]) == 0)
 
             if engine == .gptk {
                 try await Wine.winetricks(b, "win10")
                 let steam = try await Store.all[0].install(into: b) { _ in }
                 #expect(steam.programs().contains { $0.name == "steam" })
+                for p in steam.programs() {
+                    #expect(WindowsIcon.ico(for: p.url, driveC: b.driveC).flatMap(NSImage.init(data:)) != nil, "\(p.name) icon")
+                }
             } else {
                 for g in [Graphics.dxmt, .dxvk, .wined3d] {
                     var gb = b
