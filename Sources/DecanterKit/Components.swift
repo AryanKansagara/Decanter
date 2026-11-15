@@ -2,9 +2,11 @@ import Foundation
 
 /// Everything Decanter stores lives under ~/Library/Application Support/Decanter.
 public enum Paths {
-    nonisolated(unsafe) public static var root = FileManager.default
-        .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        .appending(path: "Decanter", directoryHint: .isDirectory)
+    /// `DECANTER_HOME` relocates everything (handy for tests and external drives).
+    nonisolated(unsafe) public static var root = ProcessInfo.processInfo.environment["DECANTER_HOME"]
+        .map { URL(fileURLWithPath: $0, isDirectory: true) }
+        ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appending(path: "Decanter", directoryHint: .isDirectory)
     public static var bottles: URL { root.appending(path: "Bottles", directoryHint: .isDirectory) }
     public static var engines: URL { root.appending(path: "Engines", directoryHint: .isDirectory) }
     public static var logs: URL { root.appending(path: "Logs", directoryHint: .isDirectory) }

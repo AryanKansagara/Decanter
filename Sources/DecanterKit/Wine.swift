@@ -48,7 +48,8 @@ public enum Wine {
         p.executableURL = executable ?? binary(root, bottle.config.engine)
         p.arguments = args
         p.environment = environment(for: bottle).merging(extraEnv) { $1 }
-        p.currentDirectoryURL = cwd ?? bottle.driveC
+        // drive_c doesn't exist until wineboot has run.
+        p.currentDirectoryURL = cwd ?? (FileManager.default.fileExists(atPath: bottle.driveC.path) ? bottle.driveC : bottle.url)
         let log = try openLog(bottle, header: ([p.executableURL!.lastPathComponent] + args).joined(separator: " "))
         p.standardOutput = log
         p.standardError = log

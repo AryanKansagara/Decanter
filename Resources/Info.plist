@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>Decanter</string>
+	<key>CFBundleDisplayName</key>
+	<string>Decanter</string>
+	<key>CFBundleIdentifier</key>
+	<string>app.decanter.Decanter</string>
+	<key>CFBundleExecutable</key>
+	<string>Decanter</string>
+	<key>CFBundleIconFile</key>
+	<string>Decanter</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>__VERSION__</string>
+	<key>CFBundleVersion</key>
+	<string>__VERSION__</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>MIT License. Wine, DXMT, DXVK and D3DMetal belong to their respective owners.</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Windows Program</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>exe</string>
+				<string>msi</string>
+				<string>lnk</string>
+				<string>bat</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
