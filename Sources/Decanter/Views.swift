@@ -252,13 +252,19 @@ struct ProgramTile: View {
     let program: Program
     let bottle: Bottle
     @State private var hovering = false
+    @State private var icon: NSImage?
 
     var body: some View {
         Button { model.launch(program.url, in: bottle) } label: {
             VStack(spacing: 8) {
-                Image(systemName: program.pinned ? "gamecontroller.fill" : "app.fill")
-                    .font(.system(size: 34))
-                    .foregroundStyle(.tint)
+                Group {
+                    if let icon {
+                        Image(nsImage: icon).resizable().interpolation(.high).frame(width: 52, height: 52)
+                    } else {
+                        Image(systemName: program.pinned ? "gamecontroller.fill" : "app.fill")
+                            .font(.system(size: 34)).foregroundStyle(.tint)
+                    }
+                }
                     .frame(width: 72, height: 72)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 16))
                 Text(program.name).font(.callout).lineLimit(2).multilineTextAlignment(.center)
@@ -268,6 +274,7 @@ struct ProgramTile: View {
         }
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
+        .task(id: program.url) { icon = await model.icon(for: program, in: bottle) }
         .help(program.url.path)
         .contextMenu {
             Button("Open") { model.launch(program.url, in: bottle) }

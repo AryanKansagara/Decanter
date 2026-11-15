@@ -17,7 +17,7 @@ extension Bottle {
         let users = (try? fm.contentsOfDirectory(atPath: driveC.appending(path: "users").path)) ?? []
         let menus = [driveC.appending(path: "ProgramData/Microsoft/Windows/Start Menu")]
             + users.map { driveC.appending(path: "users/\($0)/AppData/Roaming/Microsoft/Windows/Start Menu") }
-        var seen = Set(pinned.map(\.name))
+        var seen = Set(pinned.map { $0.name.lowercased() })
         var found: [Program] = []
         for menu in menus {
             let e = fm.enumerator(at: menu, includingPropertiesForKeys: nil)
@@ -25,7 +25,7 @@ extension Bottle {
                 let name = url.deletingPathExtension().lastPathComponent
                 guard url.pathExtension.lowercased() == "lnk",
                       !name.localizedCaseInsensitiveContains("uninstall"),
-                      seen.insert(name).inserted else { continue }
+                      seen.insert(name.lowercased()).inserted else { continue }
                 found.append(Program(name: name, url: url, pinned: false))
             }
         }

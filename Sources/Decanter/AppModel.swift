@@ -127,6 +127,18 @@ final class AppModel: ObservableObject {
         }
     }
 
+    private var iconCache: [URL: NSImage?] = [:]
+
+    /// The program's own Windows icon, extracted off the main thread and cached.
+    func icon(for program: Program, in bottle: Bottle) async -> NSImage? {
+        if let cached = iconCache[program.url] { return cached }
+        let url = program.url, driveC = bottle.driveC
+        let data = await Task.detached(priority: .utility) { WindowsIcon.ico(for: url, driveC: driveC) }.value
+        let image = data.flatMap(NSImage.init(data:))
+        iconCache[program.url] = image
+        return image
+    }
+
     func addToApplications(_ program: Program, in bottle: Bottle) {
         do {
             let app = try Shortcut.create(for: program, in: bottle, decanter: Bundle.main.executablePath ?? CommandLine.arguments[0])
